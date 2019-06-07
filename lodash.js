@@ -143,7 +143,19 @@
   /** Used to match property names within property paths. */
   var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/,
       reIsPlainProp = /^\w*$/,
-      rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+      rePropName = RegExp(
+        // Match anything that isn't a dot or bracket.
+        '[^.[\\]]+' + '|' +
+        // Or match property names within brackets.
+        '\\[(?:' +
+          // Match a non-string expression.
+          '([^"\'][^[]*)' + '|' +
+          // Or match strings (supports escaping characters).
+          '(["\'])((?:(?!\\2)[^\\\\]|\\\\.)*?)\\2' +
+        ')\\]'+ '|' +
+        // Or match "" as the space between consecutive dots or empty brackets.
+        '(?=(?:\\.|\\[\\])(?:\\.|\\[\\]|$))'
+      , 'g');
 
   /**
    * Used to match `RegExp`
